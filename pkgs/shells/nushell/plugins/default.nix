@@ -59,6 +59,7 @@ lib.makeScope newScope (
         semver = callPackage ./semver.nix { };
         hcl = callPackage ./hcl.nix { };
         desktop_notifications = callPackage ./desktop_notifications.nix { };
+        dns = callPackage ./dns.nix { };
       }
       // lib.optionalAttrs config.allowAliases {
         regex = throw "`nu_plugin_regex` is no longer compatible with the current Nushell release.";
