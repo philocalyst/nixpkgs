@@ -116,10 +116,10 @@ rustPlatform.buildRustPackage (
           {} \;
     ''
     + lib.optionalString stdenv.hostPlatform.isLinux ''
-      substituteInPlace $cargoDepsCopy/libappindicator-sys-*/src/lib.rs \
-        --replace-fail \
-          "libayatana-appindicator3.so.1" \
-          "${libayatana-appindicator}/lib/libayatana-appindicator3.so.1"
+      find $cargoDepsCopy -path "*/libappindicator-sys-*/src/lib.rs" \
+        -exec sed -i \
+          's|libayatana-appindicator3.so.1|${libayatana-appindicator}/lib/libayatana-appindicator3.so.1|' \
+          {} \;
     ''
     + lib.optionalString stdenv.hostPlatform.isDarwin ''
       patch -p1 < ${./use-nix-swift.patch}
@@ -171,7 +171,7 @@ rustPlatform.buildRustPackage (
         [
           "-isystem ${llvmPackages.libclang.lib}/lib/clang/${lib.getVersion llvmPackages.libclang}/include"
         ]
-        ++ lib.optional stdenv.hostPlatform.isLinux "-isystem ${stdenv.cc.libc}/include"
+        ++ lib.optional stdenv.hostPlatform.isLinux "-isystem ${stdenv.cc.libc.dev}/include"
       );
       ORT_LIB_LOCATION = "${onnxruntime}/lib";
       ORT_PREFER_DYNAMIC_LINK = "1";
