@@ -58,25 +58,3 @@
              "-target",
              "arm64-apple-macosx11.0",
              "-sdk",
-@@ -202,10 +194,9 @@
-         panic!("swiftc failed to compile {source_file}");
-     }
- 
--    let status = Command::new("libtool")
-+    let status = Command::new("ar")
-         .args([
--            "-static",
--            "-o",
-+            "crs",
-             static_lib_path
-                 .to_str()
-                 .expect("Failed to convert static lib path to string"),
-@@ -217,7 +208,7 @@
-         .expect("Failed to create static library for Apple Intelligence bridge");
- 
-     if !status.success() {
--        panic!("libtool failed for Apple Intelligence bridge");
-+        panic!("ar failed for Apple Intelligence bridge");
-     }
- 
-     println!("cargo:rustc-link-search=native={}", out_dir.display());

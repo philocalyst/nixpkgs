@@ -7,6 +7,7 @@
   cmake,
   bun,
   nodejs,
+  darwin,
   cargo-tauri,
   jq,
   llvmPackages,
@@ -139,6 +140,7 @@ rustPlatform.buildRustPackage (
     ]
     ++ lib.optionals stdenv.hostPlatform.isDarwin [
       makeBinaryWrapper
+      darwin.cctools
       swift
     ];
 
