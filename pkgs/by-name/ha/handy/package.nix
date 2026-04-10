@@ -86,6 +86,8 @@ rustPlatform.buildRustPackage (
     pname = "handy";
     version = "0.8.2";
 
+    __structuredAttrs = true;
+
     src = fetchFromGitHub {
       owner = "cjpais";
       repo = "Handy";
