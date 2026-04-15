@@ -272,10 +272,17 @@ rustPlatform.buildRustPackage (
         "$out/Applications/Handy.app/Contents/MacOS/handy"
     '';
 
-    # Expose frontendDeps so it can be built directly (e.g. by the update
-    # script) without dragging in the full handy compile.
     passthru = {
+      # Expose frontendDeps so the update script (and maintainers by
+      # hand) can build it directly without dragging in the full handy
+      # compile.
       inherit frontendDeps;
+
+      # Custom update script: nix-update alone cannot refresh the
+      # per-platform `frontendDepsHashes` table, and a naive refresh
+      # leaves the other platforms' entries stale after a version
+      # bump. See the script's header for the full flow.
+      updateScript = ./update.sh;
     };
 
     meta = {
