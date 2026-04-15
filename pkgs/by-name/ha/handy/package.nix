@@ -56,6 +56,31 @@ rustPlatform.buildRustPackage (
 
     # Bun node_modules as a fixed-output derivation; --production is intentionally
     # omitted because devDeps (e.g. @types/*) are required for `tsc` at build time.
+    #
+    # Bun's isolated install is not bit-reproducible on its own: symlink
+    # creation order in .bun/node_modules/ and in each package's .bin/
+    # directory is not stable, and a timing race in the installer drops
+    # some `.bin/<peer>` entries around circular peer dependencies. Handy
+    # ships a tiny post-install orchestrator at
+    # `.nix/scripts/normalize-install.ts` that runs three passes
+    # (canonicalize → heal → normalize) to produce a stable, idempotent
+    # node_modules/ tree; see that file's header for the full story. We
+    # call it here unconditionally right after `bun install`.
+    #
+    # Even with the tree stable within a platform, bun still downloads
+    # only the host-matching native binaries (esbuild, rollup, tauri-cli,
+    # lightningcss, tailwindcss-oxide, ...), so the hash differs between
+    # Linux and darwin. We store one hash per system; platforms without
+    # a known hash `throw` rather than fall back, so a drive-by build on
+    # an unsupported system fails fast with a pointer at the update
+    # script (see `passthru.updateScript`).
+    #
+    # TODO: switch to bun.fetchDeps once NixOS/nixpkgs#376299 is merged.
+    frontendDepsHashes = {
+      "x86_64-linux" = "sha256-tJ6LK99dELOiR0BcsTRTt/vLyNamntujLxhBy5Xl/lc=";
+      "aarch64-linux" = "sha256-S+dX6ZVgv9dexxIHoa5PxP7e0nxf/d7cKUGty5eEi8A=";
+      "aarch64-darwin" = "sha256-DQbogNBQ9izK5GPmoOudqiB2lJvct1vZI2U5lp3WFy8=";
+    };
     frontendDeps = stdenv.mkDerivation {
       pname = "${finalAttrs.pname}-frontend-deps";
       inherit (finalAttrs) version src;
@@ -67,7 +92,9 @@ rustPlatform.buildRustPackage (
       buildPhase = ''
         runHook preBuild
         export BUN_INSTALL_CACHE_DIR=$(mktemp -d)
-        bun install --force --frozen-lockfile --ignore-scripts --no-progress
+        bun install --linker=isolated --force --frozen-lockfile \
+          --ignore-scripts --no-progress
+        bun --bun "$PWD/.nix/scripts/normalize-install.ts"
         runHook postBuild
       '';
       installPhase = ''
@@ -77,7 +104,13 @@ rustPlatform.buildRustPackage (
         runHook postInstall
       '';
       dontFixup = true;
-      outputHash = "sha256-AxE6WuFOGk40h+2w3Tyvnh64Eb5yHA5EZWgemYafRhg=";
+      outputHash =
+        frontendDepsHashes.${stdenv.hostPlatform.system} or (throw ''
+          handy: no frontendDeps hash for ${stdenv.hostPlatform.system}.
+          Run `nix-update --flake handy` (or the equivalent `passthru.updateScript`)
+          on a host of that system and paste the value into
+          pkgs/by-name/ha/handy/package.nix:frontendDepsHashes.
+        '');
       outputHashMode = "recursive";
     };
   in
@@ -87,11 +120,17 @@ rustPlatform.buildRustPackage (
 
     __structuredAttrs = true;
 
+    # TEMPORARY: pin src to the HEAD of cjpais/Handy#1256 so the post-install
+    # orchestrator (`.nix/scripts/normalize-install.ts`) is present in the
+    # source tree while that PR is still open. GitHub exposes PR commits on
+    # the base repository, so we can fetch it via `owner = "cjpais"` without
+    # indirecting through a fork. Revert to `tag = "v${finalAttrs.version}";`
+    # once #1256 merges and a Handy release containing the scripts is cut.
     src = fetchFromGitHub {
       owner = "cjpais";
       repo = "Handy";
-      tag = "v${finalAttrs.version}";
-      hash = "sha256-X21uFe609Vitv7yvFMfT847a4E2gy3Uy/uPh1I8D7pA=";
+      rev = "681c6a991b7e55bd04ef9963aeb45767ebacba2e";
+      hash = "sha256-9SfVRef31Ak4H4yEUmw0R8ySqWV9F98LUhSCH+rGw/I=";
     };
 
     cargoRoot = "src-tauri";
@@ -232,6 +271,12 @@ rustPlatform.buildRustPackage (
       install_name_tool -add_rpath ${onnxruntime}/lib \
         "$out/Applications/Handy.app/Contents/MacOS/handy"
     '';
+
+    # Expose frontendDeps so it can be built directly (e.g. by the update
+    # script) without dragging in the full handy compile.
+    passthru = {
+      inherit frontendDeps;
+    };
 
     meta = {
       description = "Free, open source, offline speech-to-text application";
