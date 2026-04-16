@@ -2,29 +2,10 @@
 #!nix-shell -i bash -p nix-update nix gnused gnugrep gawk coreutils git
 # shellcheck shell=bash
 
-# update.sh — refresh Handy version, src hash, cargoHash, and the
-# `frontendDepsHashes` entry for the host this script runs on.
-#
-# Usage:
-#   nix-shell maintainers/scripts/update.nix --argstr package handy
-#   # or manually, from the nixpkgs root:
-#   ./pkgs/by-name/ha/handy/update.sh           # follow upstream latest
-#   ./pkgs/by-name/ha/handy/update.sh 0.8.3     # pin an explicit version
-#
-# What it does:
-#   1. `nix-update handy` bumps `version`, `src.hash`, `cargoHash`.
-#   2. On a version bump, *all* `frontendDepsHashes` entries are reset
-#      to `lib.fakeHash` so stale values from the previous release
-#      cannot silently pass a hash check on a host where we do not
-#      rebuild.
-#   3. `handy.passthru.frontendDeps` is rebuilt to capture the real
-#      hash for the current host's system; that entry is rewritten
-#      from `lib.fakeHash` back to the real value.
-#   4. The remaining entries stay `lib.fakeHash`. Re-run the script on
-#      each target host (or over a remote builder) to fill them in;
-#      attempts to build handy on those hosts until then will fail
-#      loudly on the hash mismatch rather than silently using stale
-#      data.
+# 1. `nix-update handy` bumps version, src.hash, cargoHash.
+# 2. On a version bump, all frontendDepsHashes entries are reset to lib.fakeHash.
+# 3. Rebuilds handy.passthru.frontendDeps to capture the real hash for the current host.
+# 4. Remaining entries stay lib.fakeHash — re-run on each target host to fill them in.
 
 set -euo pipefail
 
@@ -51,16 +32,14 @@ nix-update "${nix_update_args[@]}"
 new_version=$(read_version)
 
 if [[ "$old_version" != "$new_version" ]]; then
-  echo "update.sh: version bump $old_version → $new_version; resetting stale frontendDepsHashes"
-  # Operate only on lines inside the `frontendDepsHashes = { ... };` block.
+  echo "update.sh: version bump $old_version → $new_version; resetting frontendDepsHashes"
   sed -i -e '/frontendDepsHashes = {/,/^    };$/ s|"sha256-[^"]*"|lib.fakeHash|g' "$pkg_file"
 fi
 
 system=$(nix --extra-experimental-features nix-command eval --impure --raw --expr 'builtins.currentSystem')
 
-# Force the current host's entry to lib.fakeHash so the next build
-# reports the real value via the "got:" diagnostic even if it happens
-# to still match the previous one.
+# Force lib.fakeHash so the build reports the real hash via "got:" even
+# when the existing value happens to still be correct.
 sed -i "s|\"$system\" = \"sha256-[^\"]*\";|\"$system\" = lib.fakeHash;|" "$pkg_file"
 
 if ! grep -q "\"$system\" = lib.fakeHash;" "$pkg_file"; then
@@ -68,7 +47,7 @@ if ! grep -q "\"$system\" = lib.fakeHash;" "$pkg_file"; then
   exit 1
 fi
 
-echo "update.sh: rebuilding handy.passthru.frontendDeps on $system to capture the new hash"
+echo "update.sh: rebuilding frontendDeps on $system"
 build_out=$(nix-build -A handy.passthru.frontendDeps --no-out-link 2>&1 || true)
 new_hash=$(awk '/got:/ { print $2; exit }' <<<"$build_out")
 if [[ -z "${new_hash:-}" ]]; then

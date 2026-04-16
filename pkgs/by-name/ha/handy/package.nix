@@ -54,27 +54,11 @@ rustPlatform.buildRustPackage (
       ]
     );
 
-    # Bun node_modules as a fixed-output derivation; --production is intentionally
-    # omitted because devDeps (e.g. @types/*) are required for `tsc` at build time.
-    #
-    # Bun's isolated install is not bit-reproducible on its own: symlink
-    # creation order in .bun/node_modules/ and in each package's .bin/
-    # directory is not stable, and a timing race in the installer drops
-    # some `.bin/<peer>` entries around circular peer dependencies. Handy
-    # ships a tiny post-install orchestrator at
-    # `.nix/scripts/normalize-install.ts` that runs three passes
-    # (canonicalize → heal → normalize) to produce a stable, idempotent
-    # node_modules/ tree; see that file's header for the full story. We
-    # call it here unconditionally right after `bun install`.
-    #
-    # Even with the tree stable within a platform, bun still downloads
-    # only the host-matching native binaries (esbuild, rollup, tauri-cli,
-    # lightningcss, tailwindcss-oxide, ...), so the hash differs between
-    # Linux and darwin. We store one hash per system; platforms without
-    # a known hash `throw` rather than fall back, so a drive-by build on
-    # an unsupported system fails fast with a pointer at the update
-    # script (see `passthru.updateScript`).
-    #
+    # Per-platform bun node_modules hashes; --production is intentionally
+    # omitted because devDeps (e.g. @types/*) are required for tsc at
+    # build time. Bun downloads host-matching native binaries only, so
+    # each system has a distinct hash.
+    # Details: https://github.com/cjpais/Handy/pull/1256
     # TODO: switch to bun.fetchDeps once NixOS/nixpkgs#376299 is merged.
     frontendDepsHashes = {
       "x86_64-linux" = "sha256-tJ6LK99dELOiR0BcsTRTt/vLyNamntujLxhBy5Xl/lc=";
@@ -120,12 +104,8 @@ rustPlatform.buildRustPackage (
 
     __structuredAttrs = true;
 
-    # TEMPORARY: pin src to the HEAD of cjpais/Handy#1256 so the post-install
-    # orchestrator (`.nix/scripts/normalize-install.ts`) is present in the
-    # source tree while that PR is still open. GitHub exposes PR commits on
-    # the base repository, so we can fetch it via `owner = "cjpais"` without
-    # indirecting through a fork. Revert to `tag = "v${finalAttrs.version}";`
-    # once #1256 merges and a Handy release containing the scripts is cut.
+    # TEMPORARY: pin to cjpais/Handy#1256 for .nix/scripts/normalize-install.ts.
+    # Revert to tag = "v${finalAttrs.version}" after #1256 merges and is released.
     src = fetchFromGitHub {
       owner = "cjpais";
       repo = "Handy";
@@ -137,7 +117,7 @@ rustPlatform.buildRustPackage (
     cargoHash = "sha256-qwcKuPfSLVmjIkduKkIRCmVk6BPbxF5htfY6f+6yV0w=";
 
     postPatch = ''
-      # Strip updater artifacts; disable macOS code-signing (no identity in sandbox)
+      # Strip updater artifacts; disable macOS code-signing in sandbox
       ${jq}/bin/jq '
         del(.build.beforeBuildCommand) |
         .bundle.createUpdaterArtifacts = false |
@@ -149,7 +129,7 @@ rustPlatform.buildRustPackage (
       ${jq}/bin/jq 'del(.scripts.postinstall)' package.json > $TMPDIR/package.json
       cp $TMPDIR/package.json package.json
 
-      # cbindgen calls `cargo metadata` which fails in the Nix sandbox.
+      # cbindgen's cargo metadata fails in the sandbox
       find $cargoDepsCopy -path "*/ferrous-opencc-*/build.rs" \
         -exec sed -i \
           -e '/cbindgen::Builder::new/{:l;/write_to_file/!{N;bl};d}' \
@@ -265,23 +245,16 @@ rustPlatform.buildRustPackage (
       )
     '';
 
-    # Bake the onnxruntime dylib path into the binary's rpath so it can be found
-    # at runtime without relying on the infamous DYLD_LIBRARY_PATH (blocked by SIP on macOS).
+    # onnxruntime rpath (DYLD_LIBRARY_PATH is blocked by SIP on macOS)
     postFixup = lib.optionalString stdenv.hostPlatform.isDarwin ''
       install_name_tool -add_rpath ${onnxruntime}/lib \
         "$out/Applications/Handy.app/Contents/MacOS/handy"
     '';
 
     passthru = {
-      # Expose frontendDeps so the update script (and maintainers by
-      # hand) can build it directly without dragging in the full handy
-      # compile.
       inherit frontendDeps;
-
-      # Custom update script: nix-update alone cannot refresh the
-      # per-platform `frontendDepsHashes` table, and a naive refresh
-      # leaves the other platforms' entries stale after a version
-      # bump. See the script's header for the full flow.
+      # nix-update-script cannot manage per-platform frontendDepsHashes;
+      # this wraps nix-update and refreshes the current host's entry.
       updateScript = ./update.sh;
     };
 
