@@ -13,6 +13,7 @@
   writableTmpDirAsHomeHook,
   makeBinaryWrapper,
   swift,
+  apple-sdk_26,
 
   # Linux-only
   webkitgtk_4_1,
@@ -162,6 +163,7 @@ rustPlatform.buildRustPackage (
       makeBinaryWrapper
       cctools
       swift
+      apple-sdk_26 # optional; enables Apple Intelligence on macOS 26+
     ];
 
     buildInputs = [
