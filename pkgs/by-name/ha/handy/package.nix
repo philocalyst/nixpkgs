@@ -105,13 +105,16 @@ rustPlatform.buildRustPackage (
 
     __structuredAttrs = true;
 
-    # TEMPORARY: pin to cjpais/Handy#1256 for .nix/scripts/normalize-install.ts.
-    # Revert to tag = "v${finalAttrs.version}" after #1256 merges and is released.
+    # TEMPORARY: pin to the HEAD of cjpais/Handy#1316 (the -parse-as-library
+    # swiftc fix) applied on top of current main. Without this fix the app
+    # exits with 0 immediately on nixpkgs Darwin stdenv.
+    # Revert to tag = "v${finalAttrs.version}" after #1316 merges and ships in
+    # a Handy release.
     src = fetchFromGitHub {
       owner = "cjpais";
       repo = "Handy";
-      rev = "681c6a991b7e55bd04ef9963aeb45767ebacba2e";
-      hash = "sha256-9SfVRef31Ak4H4yEUmw0R8ySqWV9F98LUhSCH+rGw/I=";
+      rev = "1a683fb4fe59b9e4192c2f330e023dce5a43b699";
+      hash = "sha256-PQCG+SgcGf2Ieg+DNww9keYi7W3+ysRV9Y+5jwqux2M=";
     };
 
     cargoRoot = "src-tauri";
