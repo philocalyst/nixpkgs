@@ -1,5 +1,5 @@
---- a/src-tauri/build.rs	2026-04-07 08:26:23.610240094 -0400
-+++ b/src-tauri/build.rs	2026-04-07 10:35:13.241879297 -0400
+--- a/src-tauri/build.rs	2026-04-21 10:54:44.899925859 +0700
++++ b/src-tauri/build.rs	2026-04-21 10:55:19.775695866 +0700
 @@ -129,16 +129,18 @@
      let object_path = out_dir.join("apple_intelligence.o");
      let static_lib_path = out_dir.join("libapple_intelligence.a");
@@ -55,6 +55,6 @@
 +    let status = Command::new(&swiftc_path)
          .args([
 -            "swiftc",
-             "-target",
-             "arm64-apple-macosx11.0",
-             "-sdk",
+             // Without this flag swiftc treats single-file input as script
+             // mode and emits its own `_main` symbol into the .o, which can
+             // win the link against Rust's main under some linkers (e.g.
