@@ -105,16 +105,17 @@ rustPlatform.buildRustPackage (
 
     __structuredAttrs = true;
 
-    # TEMPORARY: pin to the HEAD of cjpais/Handy#1316 (the -parse-as-library
-    # swiftc fix) applied on top of current main. Without this fix the app
-    # exits with 0 immediately on nixpkgs Darwin stdenv.
+    # TEMPORARY: pin to the HEAD of cjpais/Handy#1316 (-parse-as-library
+    # swiftc fix + SDKROOT/SWIFTC env-var fallbacks for non-Xcode
+    # toolchains). Without -parse-as-library the app exits with 0
+    # immediately on nixpkgs Darwin stdenv.
     # Revert to tag = "v${finalAttrs.version}" after #1316 merges and ships in
     # a Handy release.
     src = fetchFromGitHub {
       owner = "cjpais";
       repo = "Handy";
-      rev = "1a683fb4fe59b9e4192c2f330e023dce5a43b699";
-      hash = "sha256-PQCG+SgcGf2Ieg+DNww9keYi7W3+ysRV9Y+5jwqux2M=";
+      rev = "a118ad1facfd650a40a48ef2dc204373532b1809";
+      hash = "sha256-nfCkzZQLLT05K2Cf9Woanuwg957x3+4TglHHVQivVp4=";
     };
 
     cargoRoot = "src-tauri";
@@ -144,9 +145,6 @@ rustPlatform.buildRustPackage (
         -exec sed -i \
           's|libayatana-appindicator3.so.1|${libayatana-appindicator}/lib/libayatana-appindicator3.so.1|' \
           {} \;
-    ''
-    + lib.optionalString stdenv.hostPlatform.isDarwin ''
-      patch -p1 < ${./use-nix-swift.patch}
     '';
 
     nativeBuildInputs = [
