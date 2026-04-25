@@ -241,12 +241,6 @@ rustPlatform.buildRustPackage (
             ];
           }
         }"
-        --prefix LD_LIBRARY_PATH : "${
-          lib.makeLibraryPath [
-            vulkan-loader
-            onnxruntime
-          ]
-        }"
       )
     '';
 
