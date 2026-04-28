@@ -101,25 +101,19 @@ rustPlatform.buildRustPackage (
   in
   {
     pname = "handy";
-    version = "0.8.2";
+    version = "0.8.3";
 
     __structuredAttrs = true;
 
-    # TEMPORARY: pin to the HEAD of cjpais/Handy#1316 (-parse-as-library
-    # swiftc fix + SDKROOT/SWIFTC env-var fallbacks for non-Xcode
-    # toolchains). Without -parse-as-library the app exits with 0
-    # immediately on nixpkgs Darwin stdenv.
-    # Revert to tag = "v${finalAttrs.version}" after #1316 merges and ships in
-    # a Handy release.
     src = fetchFromGitHub {
       owner = "cjpais";
       repo = "Handy";
-      rev = "a118ad1facfd650a40a48ef2dc204373532b1809";
-      hash = "sha256-nfCkzZQLLT05K2Cf9Woanuwg957x3+4TglHHVQivVp4=";
+      tag = "v${finalAttrs.version}";
+      hash = "sha256-sCCtp6UAxmCAcYeOM9+RW2czATh4Geqf1H8wXNMniYc=";
     };
 
     cargoRoot = "src-tauri";
-    cargoHash = "sha256-qwcKuPfSLVmjIkduKkIRCmVk6BPbxF5htfY6f+6yV0w=";
+    cargoHash = "sha256-mvOThNqfE24iMkVBM2zYexJkQxpMMgE4PPNXKy39hSg=";
 
     postPatch = ''
       # Strip updater artifacts; disable macOS code-signing in sandbox
