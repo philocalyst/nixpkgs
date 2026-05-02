@@ -558,7 +558,6 @@ self: super: with self; {
 
   aiosmtpd = callPackage ../development/python-modules/aiosmtpd { };
 
-  aiospamc = callPackage ../development/python-modules/aiospamc { };
   aiosmtplib = callPackage ../development/python-modules/aiosmtplib { };
 
   aiosolaredge = callPackage ../development/python-modules/aiosolaredge { };
@@ -568,6 +567,8 @@ self: super: with self; {
   aiosonic = callPackage ../development/python-modules/aiosonic { };
 
   aiosonos = callPackage ../development/python-modules/aiosonos { };
+
+  aiospamc = callPackage ../development/python-modules/aiospamc { };
 
   aiospinel = callPackage ../development/python-modules/aiospinel { };
 
@@ -3376,6 +3377,8 @@ self: super: with self; {
 
   coinbase-advanced-py = callPackage ../development/python-modules/coinbase-advanced-py { };
 
+  coinbase-commerce = callPackage ../development/python-modules/coinbase-commerce { };
+
   coincidence = callPackage ../development/python-modules/coincidence { };
 
   coincurve = callPackage ../development/python-modules/coincurve { inherit (pkgs) secp256k1; };
@@ -6181,6 +6184,7 @@ self: super: with self; {
   flammkuchen = callPackage ../development/python-modules/flammkuchen { };
 
   flanker = callPackage ../development/python-modules/flanker { };
+
   flasgger = callPackage ../development/python-modules/flasgger { };
 
   flash-attn = callPackage ../development/python-modules/flash-attn { };
@@ -6225,9 +6229,13 @@ self: super: with self; {
 
   flask-cors = callPackage ../development/python-modules/flask-cors { };
 
+  flask-dance = callPackage ../development/python-modules/flask-dance { };
+
   flask-debugtoolbar = callPackage ../development/python-modules/flask-debugtoolbar { };
 
-  flask-debugtoolbar-sqlalchemy = callPackage ../development/python-modules/flask-debugtoolbar-sqlalchemy { };  flask-dance = callPackage ../development/python-modules/flask-dance { };
+  flask-debugtoolbar-sqlalchemy =
+    callPackage ../development/python-modules/flask-debugtoolbar-sqlalchemy
+      { };
 
   flask-dramatiq = callPackage ../development/python-modules/flask-dramatiq { };
 
@@ -6268,6 +6276,7 @@ self: super: with self; {
   flask-principal = callPackage ../development/python-modules/flask-principal { };
 
   flask-profiler = callPackage ../development/python-modules/flask-profiler { };
+
   flask-pymongo = callPackage ../development/python-modules/flask-pymongo { };
 
   flask-restful = callPackage ../development/python-modules/flask-restful { };
@@ -15964,6 +15973,7 @@ self: super: with self; {
   pyre-extensions = callPackage ../development/python-modules/pyre-extensions { };
 
   pyre2 = callPackage ../development/python-modules/pyre2 { };
+
   pyreadstat = callPackage ../development/python-modules/pyreadstat { };
 
   pyrealsense2 = toPythonModule (
@@ -21809,7 +21819,6 @@ self: super: with self; {
 
   types-xxhash = callPackage ../development/python-modules/types-xxhash { };
 
-  yacron = callPackage ../development/python-modules/yacron { };
   typesense = callPackage ../development/python-modules/typesense {
     inherit (pkgs) typesense curl;
   };
@@ -22466,11 +22475,12 @@ self: super: with self; {
 
   watchgod = callPackage ../development/python-modules/watchgod { };
 
+  watchtower = callPackage ../development/python-modules/watchtower { };
+
   waterfurnace = callPackage ../development/python-modules/waterfurnace { };
 
   watergate-local-api = callPackage ../development/python-modules/watergate-local-api { };
 
-  watchtower = callPackage ../development/python-modules/watchtower { };
   watermark = callPackage ../development/python-modules/watermark { };
 
   wavedrom = callPackage ../development/python-modules/wavedrom { };
@@ -22888,10 +22898,11 @@ self: super: with self; {
 
   xxhash = callPackage ../development/python-modules/xxhash { };
 
-  yacron = callPackage ../development/python-modules/yacron { };
   xyzservices = callPackage ../development/python-modules/xyzservices { };
 
   yabadaba = callPackage ../development/python-modules/yabadaba { };
+
+  yacron = callPackage ../development/python-modules/yacron { };
 
   yacs = callPackage ../development/python-modules/yacs { };
 
