@@ -1690,6 +1690,8 @@ in
   silverbullet = runTest ./silverbullet.nix;
   simple-container = runTest ./simple-container.nix;
   simple-vm = runTest ./simple-vm.nix;
+  simplelogin = runTest ./simplelogin/default.nix;
+  simplelogin-postfix = runTest ./simplelogin/postfix.nix;
   sing-box = runTest ./sing-box.nix;
   sks = runTest ./sks.nix;
   slimserver = runTest ./slimserver.nix;
