@@ -8,6 +8,8 @@
   fontconfig,
   freetype,
   jellyfin-web,
+  symlinkJoin,
+  makeWrapper,
   sqlite,
   versionCheckHook,
 }:
@@ -52,6 +54,24 @@ buildDotnetModule (finalAttrs: {
   passthru.tests = {
     smoke-test = nixosTests.jellyfin;
   };
+
+  passthru.withPlugins =
+    plugins:
+    let
+      pluginEnv = symlinkJoin {
+        name = "jellyfin-plugin-env";
+        paths = plugins;
+      };
+    in
+    symlinkJoin {
+      name = "${finalAttrs.pname}-with-plugins-${finalAttrs.version}";
+      paths = [ finalAttrs.finalPackage ];
+      nativeBuildInputs = [ makeWrapper ];
+      postBuild = ''
+        wrapProgram $out/bin/jellyfin \
+          --set JELLYFIN_PLUGIN_DIR "${pluginEnv}/lib/jellyfin/plugins"
+      '';
+    };
 
   passthru.updateScript = ./update.sh;
 
