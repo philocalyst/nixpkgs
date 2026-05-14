@@ -1,0 +1,274 @@
+{
+  "AniDB": {
+    "description": "AniDB metadata provider\n",
+    "hash": "0ab94csjv8h9sqxlwjxqyl6air33jwjv678nrb8jlhbilfmz3ns6",
+    "owner": "jellyfin",
+    "pname": "anidb",
+    "url": "https://repo.jellyfin.org/files/plugin/anidb/anidb_11.0.0.0.zip",
+    "version": "11.0.0.0"
+  },
+  "AniList": {
+    "description": "AniList metadata provider\n",
+    "hash": "0y9sn8y6r0hggv5b7gbnd4ykpdfjzj0pcfd3937l7r2w0lp1in1a",
+    "owner": "jellyfin",
+    "pname": "anilist",
+    "url": "https://repo.jellyfin.org/files/plugin/anilist/anilist_13.0.0.0.zip",
+    "version": "13.0.0.0"
+  },
+  "AniSearch": {
+    "description": "AniSearch metadata provider\n",
+    "hash": "04s5yp1kavf0r502zbkiqksrmf7h9pc0bdzg6hs0lfi8bi2b38pm",
+    "owner": "jellyfin",
+    "pname": "anisearch",
+    "url": "https://repo.jellyfin.org/files/plugin/anisearch/anisearch_6.0.0.0.zip",
+    "version": "6.0.0.0"
+  },
+  "Artwork": {
+    "description": "Downloads artwork from a repository for various media types.\n",
+    "hash": "11j2xj3dypxpxbylsgvdcccr87x6ixr7886lv4sclzazgbsgjn1c",
+    "owner": "jellyfin",
+    "pname": "artwork",
+    "url": "https://repo.jellyfin.org/files/plugin/artwork/artwork_2.0.0.0.zip",
+    "version": "2.0.0.0"
+  },
+  "Bookshelf": {
+    "description": "Supports several different metadata providers and options for organizing your collection.\n",
+    "hash": "1aqrb50b6c41vdgs83f9qdb27d8pim2lilmrvd283b3m310xma6p",
+    "owner": "jellyfin",
+    "pname": "bookshelf",
+    "url": "https://repo.jellyfin.org/files/plugin/bookshelf/bookshelf_13.0.0.0.zip",
+    "version": "13.0.0.0"
+  },
+  "Chapter Segments Provider": {
+    "description": "Create media segments based on chapters.\n",
+    "hash": "1fhzbkvjrb8q52xpng4fx6pj5fxvkv3vq2zjvydd2isbaxzrd36c",
+    "owner": "jellyfin",
+    "pname": "chapter-segments-provider",
+    "url": "https://repo.jellyfin.org/files/plugin/chapter-segments-provider/chapter-segments-provider_4.0.0.0.zip",
+    "version": "4.0.0.0"
+  },
+  "Comic Vine": {
+    "description": "Pulls comic metadata and cover images from Comic Vine.\n",
+    "hash": "10vijgxmiygmbpq751i005mvja9zsrb9s0l4rmdbm1mzhbdcb00b",
+    "owner": "jellyfin",
+    "pname": "comic-vine",
+    "url": "https://repo.jellyfin.org/files/plugin/comic-vine/comic-vine_1.0.0.0.zip",
+    "version": "1.0.0.0"
+  },
+  "Cover Art Archive": {
+    "description": "This plugin provides images from the Cover Art Archive https://musicbrainz.org/doc/Cover_Art_Archive and depends on the MusicBrainz metadata provider to know what images belong where\n",
+    "hash": "1zafa95r6fq49wk6jcj2j1003xclpvgpz562dmbn2mk23prnhsnv",
+    "owner": "jellyfin",
+    "pname": "cover-art-archive",
+    "url": "https://repo.jellyfin.org/files/plugin/cover-art-archive/cover-art-archive_9.0.0.0.zip",
+    "version": "9.0.0.0"
+  },
+  "DLNA": {
+    "description": "Adds DLNA capability to Jellyfin\n",
+    "hash": "18cjgs86xvrkg0vx6qf8d7mqz1fdxl18s28zvn7kqdrzw302f08h",
+    "owner": "jellyfin",
+    "pname": "dlna",
+    "url": "https://repo.jellyfin.org/files/plugin/dlna/dlna_10.0.0.0.zip",
+    "version": "10.0.0.0"
+  },
+  "Discogs": {
+    "description": "Get music metadata from Discogs\n",
+    "hash": "0hw2ggz0zgzxx66h0q7jqn7x4fcz7fhbv167zg9mqwva9rhw7qxd",
+    "owner": "jellyfin",
+    "pname": "discogs",
+    "url": "https://repo.jellyfin.org/files/plugin/discogs/discogs_2.0.0.0.zip",
+    "version": "2.0.0.0"
+  },
+  "Fanart": {
+    "description": "Scrape poster images for movies, shows, and artists in your library.",
+    "hash": "03cfq87fqq284qs0mvvhddg80kii8zjfks9p002fk7ddfwdnf8rp",
+    "owner": "jellyfin",
+    "pname": "fanart",
+    "url": "https://repo.jellyfin.org/files/plugin/fanart/fanart_14.0.0.0.zip",
+    "version": "14.0.0.0"
+  },
+  "Google Books": {
+    "description": "Pulls book metadata and cover images from Google Books.\n",
+    "hash": "18qa8yrl2v3z3jby6vlvbi4h2gwny41as2lm6gk5wx7wik4h4xmw",
+    "owner": "jellyfin",
+    "pname": "google-books",
+    "url": "https://repo.jellyfin.org/files/plugin/google-books/google-books_1.0.0.0.zip",
+    "version": "1.0.0.0"
+  },
+  "IMVDb": {
+    "description": "Get Music Video metadata from IMVDb\n",
+    "hash": "0h15gmk2760ad0w3fg5qwgiy2caaw293r5pwws9xw1x7rh6wz0g3",
+    "owner": "jellyfin",
+    "pname": "imvdb",
+    "url": "https://repo.jellyfin.org/files/plugin/imvdb/imvdb_5.0.0.0.zip",
+    "version": "5.0.0.0"
+  },
+  "Kitsu": {
+    "description": "Kitsu metadata provider\n",
+    "hash": "0ijxszhd4rmp6c1ba2nl4wz8iykyc763y33skbbm8idys1zpln5l",
+    "owner": "jellyfin",
+    "pname": "kitsu",
+    "url": "https://repo.jellyfin.org/files/plugin/kitsu/kitsu_7.0.0.0.zip",
+    "version": "7.0.0.0"
+  },
+  "Kodi Sync Queue": {
+    "description": "This plugin will track all media changes while Kodi clients are offline to decrease sync times.",
+    "hash": "154r7vlygqcma30kac6nwckrwq3p13m7pwbvzinjjn1z8kfldnf6",
+    "owner": "jellyfin",
+    "pname": "kodi-sync-queue",
+    "url": "https://repo.jellyfin.org/files/plugin/kodi-sync-queue/kodi-sync-queue_15.0.0.0.zip",
+    "version": "15.0.0.0"
+  },
+  "LDAP Authentication": {
+    "description": "Authenticate your Jellyfin users against an LDAP database, and optionally create users who do not yet exist automatically.\n\nAllows the administrator to customize most aspects of the LDAP authentication process, including customizable search attributes, username attribute, and a search filter for administrative users (set on user creation). The user, via the \"Manual Login\" process, can enter any valid attribute value, which will be mapped back to the specified username attribute automatically as well.\n",
+    "hash": "14lfwgi1f4xfcasa8c0b0mfpp4y5q0kplkjzi68q9fh41bvh6slv",
+    "owner": "jellyfin",
+    "pname": "ldap-authentication",
+    "url": "https://repo.jellyfin.org/files/plugin/ldap-authentication/ldap-authentication_22.0.0.0.zip",
+    "version": "22.0.0.0"
+  },
+  "Local Intros": {
+    "description": "Select a flashy pre-roll from local storage to run before any video content. The video details are loaded from disk after a video is played from the library from the beginning of the video. A random video is selected, and all videos in the local directory are enabled by default. Specific videos can be enabled or disabled as necessary. After videos are loaded for the first time, additional videos found in the directory are not enabled by default.\n",
+    "hash": "1avfffpgi5z9mmxwq2307wwa1n0v1kcm939y6l0gh03h545cj863",
+    "owner": "Jellyfin",
+    "pname": "local-intros",
+    "url": "https://repo.jellyfin.org/files/plugin/local-intros/local-intros_4.0.0.0.zip",
+    "version": "4.0.0.0"
+  },
+  "LrcLib Lyrics": {
+    "description": "Download lyrics from https://lrclib.net/\n",
+    "hash": "0n8wd3cxkan6vxw4353xl859diw4xccmgx0lgl6p4a58pjdj50kp",
+    "owner": "jellyfin",
+    "pname": "lrclib-lyrics",
+    "url": "https://repo.jellyfin.org/files/plugin/lrclib-lyrics/lrclib-lyrics_3.0.0.0.zip",
+    "version": "3.0.0.0"
+  },
+  "NextPVR": {
+    "description": "Provides access to live TV, program guide, and recordings from NextPVR.\n",
+    "hash": "123c0nwg3d8fxw65js80bdwjia26q78kbsjjqgbsxf84i7xkf520",
+    "owner": "jellyfin",
+    "pname": "nextpvr",
+    "url": "https://repo.jellyfin.org/files/plugin/nextpvr/nextpvr_13.0.0.0.zip",
+    "version": "13.0.0.0"
+  },
+  "OPDS": {
+    "description": "Provides an OPDS feed for book browsing.\n",
+    "hash": "0y9lpsqw8yqkx3x6clgf2nmjcd9ijdyr4qb1wqchlw09i5kz4yib",
+    "owner": "jellyfin",
+    "pname": "opds",
+    "url": "https://repo.jellyfin.org/files/plugin/opds/opds_7.0.0.0.zip",
+    "version": "7.0.0.0"
+  },
+  "Open Subtitles": {
+    "description": "Download subtitles from the internet to use with your media files. (Requires configuration)",
+    "hash": "19vwc5yxxxykw194l1j6hg9zl7ccqjgx5ajvhh01bgk502d21avg",
+    "owner": "jellyfin",
+    "pname": "open-subtitles",
+    "url": "https://repo.jellyfin.org/files/plugin/open-subtitles/open-subtitles_24.0.0.0.zip",
+    "version": "24.0.0.0"
+  },
+  "Playback Reporting": {
+    "description": "Collect and show user play statistics",
+    "hash": "1gnrhn3d1lnjf92diagym4m9w0brmmjj4g3rhpi5v8b7jyw68288",
+    "owner": "jellyfin",
+    "pname": "playback-reporting",
+    "url": "https://repo.jellyfin.org/files/plugin/playback-reporting/playback-reporting_17.0.0.0.zip",
+    "version": "17.0.0.0"
+  },
+  "Reports": {
+    "description": "Generate reports of your media library",
+    "hash": "03kwk4xzz0y6fpd3lns17n667yjnfjfkvwkib4q8d8qq9gknif0m",
+    "owner": "jellyfin",
+    "pname": "reports",
+    "url": "https://repo.jellyfin.org/files/plugin/reports/reports_18.0.0.0.zip",
+    "version": "18.0.0.0"
+  },
+  "Session Cleaner": {
+    "description": "Removes old sessions (devices).\n",
+    "hash": "15x2hr7j3p5l9yh39kvr4g268lzgfbh2lz5waip840fg1aa4zncg",
+    "owner": "jellyfin",
+    "pname": "session-cleaner",
+    "url": "https://repo.jellyfin.org/files/plugin/session-cleaner/session-cleaner_5.0.0.0.zip",
+    "version": "5.0.0.0"
+  },
+  "Simkl": {
+    "description": "Scrobble your watched Movies, TV Shows and Anime to Simkl and share your progress with friends!\n",
+    "hash": "0lhd77q47yw25frfhkgi7f7pb7x3d7rm3x09l39j83iygwrs982v",
+    "owner": "crobibero",
+    "pname": "simkl",
+    "url": "https://repo.jellyfin.org/files/plugin/simkl/simkl_8.0.0.0.zip",
+    "version": "8.0.0.0"
+  },
+  "Subtitle Extract": {
+    "description": "Extracts embedded subtitles.\n",
+    "hash": "0sl7b3dc9smj9mqhl084kagvcks67wdq77ikx9ja0bzlawl9hx5y",
+    "owner": "jellyfin",
+    "pname": "subtitle-extract",
+    "url": "https://repo.jellyfin.org/files/plugin/subtitle-extract/subtitle-extract_7.0.0.0.zip",
+    "version": "7.0.0.0"
+  },
+  "TMDb Box Sets": {
+    "description": "Automatically create movie box sets based on TMDb collections",
+    "hash": "1icdi0d1n3bcv6bhwid5ivn1cib7fzplfhxc6i1mbwzhszws05p8",
+    "owner": "jellyfin",
+    "pname": "tmdb-box-sets",
+    "url": "https://repo.jellyfin.org/files/plugin/tmdb-box-sets/tmdb-box-sets_13.0.0.0.zip",
+    "version": "13.0.0.0"
+  },
+  "TVHeadend": {
+    "description": "Manage TVHeadend from Jellyfin",
+    "hash": "0ba9kyyzcp9smdji9l15sw8ff3ikq66biyfrryh7cv1445sg3mhb",
+    "owner": "jellyfin",
+    "pname": "tvheadend",
+    "url": "https://repo.jellyfin.org/files/plugin/tvheadend/tvheadend_13.0.0.0.zip",
+    "version": "13.0.0.0"
+  },
+  "TVmaze": {
+    "description": "Get TV metadata from TVmaze\n",
+    "hash": "1s1g2n11dk1snr050cwcnzasbpsgfazjmm0r8drhbqb0grnp45cx",
+    "owner": "jellyfin",
+    "pname": "tvmaze",
+    "url": "https://repo.jellyfin.org/files/plugin/tvmaze/tvmaze_13.0.0.0.zip",
+    "version": "13.0.0.0"
+  },
+  "TheTVDB": {
+    "description": "Get TV metadata from TheTvdb\n",
+    "hash": "08c3mbgypi87vng3mjxlcw22z5lrin6k12p7mrb0xhnxbamw7daz",
+    "owner": "jellyfin",
+    "pname": "thetvdb",
+    "url": "https://repo.jellyfin.org/files/plugin/thetvdb/thetvdb_22.0.0.0.zip",
+    "version": "22.0.0.0"
+  },
+  "Trakt": {
+    "description": "Record your watched media with Trakt.\n",
+    "hash": "148ns0nc2hd4jf7661l433wj6kvcvxwb50r1klzhsr3fbzbr7jgg",
+    "owner": "jellyfin",
+    "pname": "trakt",
+    "url": "https://repo.jellyfin.org/files/plugin/trakt/trakt_29.0.0.0.zip",
+    "version": "29.0.0.0"
+  },
+  "Transcode Killer": {
+    "description": "Kills transcodes above set resolutions to prevent server overload.",
+    "hash": "027amcz7b9b91x1vg6wbi46is29n5mb5pgr6zyhl0jymgwnab3m8",
+    "owner": "jellyfin",
+    "pname": "transcode-killer",
+    "url": "https://repo.jellyfin.org/files/plugin/transcode-killer/transcode-killer_4.0.0.0.zip",
+    "version": "4.0.0.0"
+  },
+  "VGMdb": {
+    "description": "Adds support for VGMdb to music libraries. Can provide both images and metadata for artists and albums.\n",
+    "hash": "0hyk121xn43b4066vqc8xjqcqi75v521kcp59m41rqqaivvy8xk0",
+    "owner": "jellyfin",
+    "pname": "vgmdb",
+    "url": "https://repo.jellyfin.org/files/plugin/vgmdb/vgmdb_5.0.0.0.zip",
+    "version": "5.0.0.0"
+  },
+  "Webhook": {
+    "description": "Sends notifications to destinations via webhooks.\n",
+    "hash": "1dw3732sjfxlgnpmbbg61dk8vws9c6p2gjsnb6i1yrmazp8mpcdn",
+    "owner": "jellyfin",
+    "pname": "webhook",
+    "url": "https://repo.jellyfin.org/files/plugin/webhook/webhook_21.0.0.0.zip",
+    "version": "21.0.0.0"
+  }
+}

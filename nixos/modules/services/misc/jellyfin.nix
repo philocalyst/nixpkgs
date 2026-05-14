@@ -29,7 +29,9 @@ let
     nullOr
     path
     str
+    str
     submodule
+    package
     ;
   cfg = config.services.jellyfin;
   filteredDecodingCodecs = builtins.filter (
@@ -89,6 +91,14 @@ in
       enable = mkEnableOption "Jellyfin Media Server";
 
       package = mkPackageOption pkgs "jellyfin" { };
+
+      plugins = mkOption {
+        type = lib.types.listOf lib.types.package;
+        default = [];
+        description = ''
+          List of Jellyfin plugins to install natively.
+        '';
+      };
 
       user = mkOption {
         type = str;
@@ -427,13 +437,15 @@ in
 
         # This is mostly follows: https://github.com/jellyfin/jellyfin/blob/master/fedora/jellyfin.service
         # Upstream also disable some hardenings when running in LXC, we do the same with the isContainer option
-        serviceConfig = {
+        serviceConfig = let
+          finalPackage = if cfg.plugins == [] then cfg.package else cfg.package.withPlugins cfg.plugins;
+        in {
           Type = "simple";
           User = cfg.user;
           Group = cfg.group;
           UMask = "0077";
           WorkingDirectory = cfg.dataDir;
-          ExecStart = "${getExe cfg.package} --datadir '${cfg.dataDir}' --configdir '${cfg.configDir}' --cachedir '${cfg.cacheDir}' --logdir '${cfg.logDir}'";
+          ExecStart = "${getExe finalPackage} --datadir '${cfg.dataDir}' --configdir '${cfg.configDir}' --cachedir '${cfg.cacheDir}' --logdir '${cfg.logDir}'";
           Restart = "on-failure";
           TimeoutSec = 15;
           SuccessExitStatus = [

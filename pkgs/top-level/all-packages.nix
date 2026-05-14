@@ -1806,6 +1806,8 @@ with pkgs;
 
   jellyfin-mpv-shim = python3Packages.callPackage ../applications/video/jellyfin-mpv-shim { };
 
+  jellyfinPlugins = callPackage ../servers/jellyfin/plugins { };
+
   klaus = with python3Packages; toPythonApplication klaus;
 
   klipper = callPackage ../servers/klipper { };
