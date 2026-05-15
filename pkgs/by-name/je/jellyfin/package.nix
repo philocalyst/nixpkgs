@@ -64,7 +64,7 @@ buildDotnetModule (finalAttrs: {
       };
     in
     symlinkJoin {
-      name = "${pname}-with-plugins-${version}";
+      name = "jellyfin-with-plugins-10.11.8";
       paths = [ finalAttrs.finalPackage ];
       nativeBuildInputs = [ makeWrapper ];
       postBuild = ''
