@@ -64,7 +64,7 @@ buildDotnetModule (finalAttrs: {
       };
     in
     symlinkJoin {
-      name = "${finalAttrs.pname}-with-plugins-${finalAttrs.version}";
+      name = "${pname}-with-plugins-${version}";
       paths = [ finalAttrs.finalPackage ];
       nativeBuildInputs = [ makeWrapper ];
       postBuild = ''
