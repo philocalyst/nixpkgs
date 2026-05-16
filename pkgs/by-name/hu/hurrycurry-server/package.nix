@@ -8,14 +8,14 @@
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "hurrycurry-server";
-  version = "3.0.1";
+  version = "3.1.1-1";
 
   src = fetchFromGitea {
     domain = "codeberg.org";
     owner = "hurrycurry";
     repo = "hurrycurry";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-HUxuM4H7DGn4DmxioUwBZN8+b6ro5JBWnqS3oBR4nH4=";
+    hash = "sha256-W8S3qRNJ3SNWMPhlQsGcvx3tLJmYvXavxP1wehlJsuE=";
   };
 
   postPatch = ''
