@@ -1,11 +1,14 @@
 {
   stdenv,
   hurrycurry-server,
-  godot_4_5,
+  godot,
   ffmpeg,
   writableTmpDirAsHomeHook,
   copyDesktopItems,
   makeDesktopItem,
+  unzip,
+  lib,
+  makeWrapper,
 }:
 
 stdenv.mkDerivation {
@@ -13,11 +16,13 @@ stdenv.mkDerivation {
   inherit (hurrycurry-server) version src;
 
   nativeBuildInputs = [
-    godot_4_5
+    godot
     ffmpeg
     writableTmpDirAsHomeHook
-    copyDesktopItems
-  ];
+    makeWrapper
+  ]
+  ++ lib.optionals stdenv.isLinux [ copyDesktopItems ]
+  ++ lib.optionals stdenv.isDarwin [ unzip ];
 
   postPatch = ''
     patchShebangs --build data/recipes/anticurry.sed
@@ -26,12 +31,27 @@ stdenv.mkDerivation {
   buildPhase = ''
     runHook preBuild
 
-    ln -s "${godot_4_5.export-template}" $HOME/.local
+    ${
+      if stdenv.isDarwin then
+        ''
+          mkdir -p "$HOME/Library/Application Support/Godot/export_templates"
+          ln -s "${godot.export-template}/share/godot/export_templates/4.6.2.stable" \
+            "$HOME/Library/Application Support/Godot/export_templates/4.6.2.stable"
+        ''
+      else
+        ''
+          ln -s "${godot.export-template}" "$HOME/.local"
+        ''
+    }
 
     make all_client
+
     pushd client
       mkdir -p build
-      godot4 --headless --export-release "${stdenv.hostPlatform.config}" ./build/hurrycurry
+
+      godot --headless --export-release "${
+        if stdenv.isDarwin then "all-apple-darwin" else stdenv.hostPlatform.config
+      }" ./build/hurrycurry${lib.optionalString stdenv.isDarwin ".zip"}
     popd
 
     runHook postBuild
@@ -40,13 +60,23 @@ stdenv.mkDerivation {
   installPhase = ''
     runHook preInstall
 
-    install -Dm755 client/build/hurrycurry -t $out/bin
-    install -Dm644 client/icons/main.png $out/share/icons/hicolor/1024x1024/apps/hurrycurry.png
+    ${lib.optionalString stdenv.isDarwin ''
+      mkdir -p "$out/Applications" "$out/bin"
+      unzip client/build/hurrycurry.zip -d "$out/Applications"
+
+      # No binary output on Darwin due to lack of a way to resolve .pck searching
+    ''}
+
+    ${lib.optionalString (!stdenv.isDarwin) ''
+      install -Dm755 client/build/hurrycurry -t $out/bin
+      install -Dm644 client/icons/main.png \
+        $out/share/icons/hicolor/1024x1024/apps/hurrycurry.png
+    ''}
 
     runHook postInstall
   '';
 
-  desktopItems = [
+  desktopItems = lib.optionals stdenv.isLinux [
     (makeDesktopItem {
       type = "Application";
       name = "hurrycurry";

@@ -58,6 +58,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
     homepage = "https://hurrycurry.org";
     license = lib.licenses.agpl3Only;
     changelog = "https://codeberg.org/hurrycurry/hurrycurry/src/branch/master/CHANGELOG.md";
+    platforms = lib.platforms.unix;
     maintainers = with lib.maintainers; [
       aleksana
       philocalyst
