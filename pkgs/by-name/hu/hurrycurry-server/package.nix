@@ -21,9 +21,11 @@ rustPlatform.buildRustPackage (finalAttrs: {
   postPatch = ''
     substituteInPlace server/src/main.rs \
       --replace-fail '/usr/local/share/hurrycurry/data' "$out/share/hurrycurry/data"
+
     # Don't rely on makefile to compile rust programs
     substituteInPlace makefile \
       --replace-fail 'target/release' "$out/bin"
+
     patchShebangs --build data/recipes/anticurry.sed
   '';
 
