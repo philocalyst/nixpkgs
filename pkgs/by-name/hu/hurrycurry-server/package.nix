@@ -54,8 +54,10 @@ rustPlatform.buildRustPackage (finalAttrs: {
 
   meta = {
     description = "Cooperative 3D multiplayer game about cooking";
+    longDescription = "Customers enter your restaurant and order various meals. Your task is to assemble these meals by cutting, cooking, baking, searing and combining resources in the kitchen. Multitasking is crucial, but can lead to food burning or customers leaving if you take too long. There are many different restaurant/kitchen layouts to choose from.";
     homepage = "https://hurrycurry.org";
     license = lib.licenses.agpl3Only;
+    changelog = "https://codeberg.org/hurrycurry/hurrycurry/src/branch/master/CHANGELOG.md";
     maintainers = with lib.maintainers; [
       aleksana
       philocalyst
