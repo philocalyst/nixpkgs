@@ -54,7 +54,10 @@ rustPlatform.buildRustPackage (finalAttrs: {
     description = "Cooperative 3D multiplayer game about cooking";
     homepage = "https://hurrycurry.org";
     license = lib.licenses.agpl3Only;
-    maintainers = with lib.maintainers; [ aleksana ];
+    maintainers = with lib.maintainers; [
+      aleksana
+      philocalyst
+    ];
     mainProgram = "hurrycurry-server";
   };
 })
