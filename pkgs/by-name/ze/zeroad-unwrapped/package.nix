@@ -2,13 +2,11 @@
   stdenv,
   lib,
   perl,
-  fetchurl,
-  fetchpatch,
   python3,
   fmt_9,
   libidn,
   pkg-config,
-  spidermonkey_128,
+  spidermonkey_140,
   boost,
   icu,
   libxml2,
@@ -26,6 +24,8 @@
   libGL,
   xorgproto,
   libx11,
+  fetchgit,
+  fetchsvn,
   libxcursor,
   nspr,
   SDL2,
@@ -34,45 +34,46 @@
   premake5,
   cxxtest,
   freetype,
-  withEditor ? true,
   wxwidgets_3_2,
+
+  withLobby ? true,
+
+  withEditor ? true,
 }:
 
-# You can find more instructions on how to build 0ad here:
-# https://gitea.wildfiregames.com/0ad/0ad/wiki/BuildInstructions
-
-let
-  # When updating 0 A.D., check for necessary SpiderMonkey patches here:
-  # https://gitea.wildfiregames.com/0ad/0ad/src/branch/main/libraries/source/spidermonkey/patches
-  spidermonkey = spidermonkey_128.overrideAttrs (old: {
-    # Fix segfault during GUI GC (fixed in v140)
-    # https://bugzilla.mozilla.org/show_bug.cgi?id=1982134
-    patches = old.patches or [ ] ++ [
-      (fetchpatch {
-        name = "fix-extra-gc-tracing.patch";
-        url = "https://github.com/mozilla-firefox/firefox/commit/bf1994b05baea60f84309475cd544fe89acf82f2.patch";
-        hash = "sha256-3sTcZb34yHheqK7O9aHSwMife3uJnf3us+0sPJ2NzKs=";
-      })
-    ];
-  });
-in
 stdenv.mkDerivation (finalAttrs: {
   pname = "0ad";
   version = "0.28.0";
 
-  src = fetchurl {
-    url = "https://releases.wildfiregames.com/0ad-${finalAttrs.version}-unix-build.tar.xz";
-    hash = "sha256-J+IXdV73apIv5Y2/WT2W5Utu0jddI/VIw1YZqmvVpCo=";
+  __structuredAttrs = true;
+  strictDeps = true;
+
+  # fetchFromGitea/fetchurl fails because the Wildfire Games Gitea instance
+  # has bot protection (Anubis).
+  src = fetchgit {
+    url = "https://gitea.wildfiregames.com/0ad/0ad.git";
+    rev = "v${finalAttrs.version}";
+    hash = "sha256-RDQ1Av8XBHFU0q9bVkjRvTqg+zVGunq6LfMAP12Lh7A=";
+  };
+
+  passthru = {
+    fcollada = fetchsvn {
+      url = "https://svn.wildfiregames.com/public/source-libs/trunk/fcollada";
+      rev = 28209;
+      hash = "sha256-gfbIukYILTF+GA64QlPHfKhxb9bIffiunj07f0RC7oY=";
+    };
   };
 
   nativeBuildInputs = [
     python3
     perl
     pkg-config
+    premake5
+    libxml2.dev
   ];
 
   buildInputs = [
-    spidermonkey
+    spidermonkey_140
     boost
     icu
     libxml2
@@ -86,11 +87,6 @@ stdenv.mkDerivation (finalAttrs: {
     miniupnpc
     openal
     libidn
-    libGLU
-    libGL
-    xorgproto
-    libx11
-    libxcursor
     nspr
     SDL2
     gloox
@@ -98,90 +94,124 @@ stdenv.mkDerivation (finalAttrs: {
     libsodium
     fmt_9
     freetype
-    premake5
     cxxtest
+  ]
+  ++ lib.optionals stdenv.hostPlatform.isLinux [
+    libGLU
+    libGL
+    xorgproto
+    libx11
+    libxcursor
   ]
   ++ lib.optional withEditor wxwidgets_3_2;
 
   env = {
-    NIX_CFLAGS_COMPILE = toString [
-      "-I${xorgproto}/include"
-      "-I${libx11.dev}/include"
-      "-I${libxcursor.dev}/include"
-      "-I${SDL2}/include/SDL2"
-      "-I${fmt_9.dev}/include"
-      "-I${nvidia-texture-tools.dev}/include"
-    ];
-
-    NIX_CFLAGS_LINK = toString [
-      "-L${nvidia-texture-tools.lib}/lib/static"
-    ];
+    MIN_OSX_VERSION = stdenv.hostPlatform.darwinMinVersion or "";
+    ${if stdenv.isLinux then "NIX_CFLAGS_LINK" else "NIX_LDFLAGS"} =
+      "-L${nvidia-texture-tools.lib}/lib${lib.optionalString stdenv.isLinux "/static"}";
+  }
+  // lib.optionalAttrs withEditor {
+    WX_CONFIG = "${lib.getBin wxwidgets_3_2}/bin/wx-config";
   };
 
   patches = [
     ./rootdir_env.patch
+    ./use-mozjs-140.patch
+    ./adapt-js-api-to-esr-140.patch
+  ];
+
+  makeFlags = [
+    "config=release"
+    "verbose=1"
   ];
 
   configurePhase = ''
     runHook preConfigure
 
-    # Delete shipped libraries which we don't need.
     rm -rf libraries/source/{cxxtest-4.4,nvtt,premake-core,spidermonkey,spirv-reflect}
+    # Remove bundled macOS iconv — Nix provides system libiconv and the bundled
+    # headers conflict with the system ones from propagated build inputs.
+    rm -rf libraries/macos/iconv
 
-    # Build remaining library dependencies (should be fcollada only)
+    # Fix ambiguous iconv calls in tinygettext when both <iconv.h> (system)
+    # and tinygettext/iconv.hpp (inline wrappers) are visible in the same TU.
+    substituteInPlace source/third_party/tinygettext/src/iconv.cpp \
+      --replace-fail '    iconv_close(cd);' '    ::iconv_close(cd);'
+    substituteInPlace source/third_party/tinygettext/src/iconv.cpp \
+      --replace-fail '        iconv(cd, nullptr, nullptr, nullptr, nullptr);' \
+      '        ::iconv(cd, nullptr, nullptr, nullptr, nullptr);'
+
     pushd libraries
-    ./build-source-libs.sh \
-      --with-system-cxxtest \
-      --with-system-nvtt \
-      --with-system-mozjs \
-      --with-system-premake \
-      -j$NIX_BUILD_CORES
+      # build-source-libs.sh refuses to run on macOS; neutralise the guard
+      # since we use --with-system-* and Nix provides all dependencies.
+      substituteInPlace build-source-libs.sh \
+        --replace-fail 'die "This script should not be used on macOS: use build-macos-libs.sh instead."' \
+                  'echo "Nix build on macOS, continuing..."'
+
+      # Pre-populate fcollada source via fetchsvn to avoid runtime svn
+      mkdir -p source/fcollada/fcollada-28209
+      cp -R ${finalAttrs.passthru.fcollada}/* source/fcollada/fcollada-28209/
+      # Nix store files are read-only; make writable so rm -Rf succeeds
+      chmod -R u+w source/fcollada/fcollada-28209
+      tar cJf source/fcollada/fcollada-28209.tar.xz \
+        -C source/fcollada fcollada-28209
+      rm -Rf source/fcollada/fcollada-28209
+
+      ./build-source-libs.sh \
+        --with-system-cxxtest \
+        --with-system-nvtt \
+        --with-system-mozjs \
+        --with-system-premake \
+        -j$NIX_BUILD_CORES
     popd
 
-    # Update Makefiles
     pushd build/workspaces
-    ./update-workspaces.sh \
-      --with-system-premake5 \
-      --with-system-cxxtest \
-      --with-system-nvtt \
-      --with-system-mozjs \
-      ${lib.optionalString (!withEditor) "--without-atlas"} \
-      --bindir="$out"/bin \
-      --libdir="$out"/lib/0ad \
-      --without-tests \
-      -j $NIX_BUILD_CORES
+      ./update-workspaces.sh \
+        --with-system-premake5 \
+        --with-system-cxxtest \
+        --with-system-nvtt \
+        --with-system-mozjs \
+        ${lib.optionalString (!withEditor) "--without-atlas"} \
+        ${lib.optionalString (!withLobby) "--without-lobby"} \
+        --without-pch \
+        --bindir="$out"/bin \
+        --libdir="$out"/lib/0ad \
+        --datadir="$out/share/0ad" \
+        --without-tests \
+        -j $NIX_BUILD_CORES
     popd
 
-    # Move to the build directory.
     pushd build/workspaces/gcc
-
-    runHook postConfigure
+      runHook postConfigure
+    popd
   '';
 
   enableParallelBuilding = true;
 
   installPhase = ''
-    popd
-
-    # Copy executables.
     install -Dm755 binaries/system/pyrogenesis "$out"/bin/0ad
     ${lib.optionalString withEditor ''
       install -Dm755 binaries/system/ActorEditor "$out"/bin/ActorEditor
     ''}
 
-    # Copy l10n data.
     install -Dm755 -t $out/share/0ad/data/l10n binaries/data/l10n/*
 
-    # Copy libraries.
-    install -Dm644 -t $out/lib/0ad        binaries/system/*.so
+    mkdir -p "$out/lib/0ad"
 
-    # Copy icon.
-    install -D build/resources/0ad.png     $out/share/icons/hicolor/128x128/apps/0ad.png
+    shopt -s nullglob
+    for f in binaries/system/*.so binaries/system/*.dylib; do
+      [[ -e "$f" ]] || continue
+      install -Dm644 "$f" "$out/lib/0ad/$(basename "$f")"
+    done
+
+    install -D build/resources/0ad.png $out/share/icons/hicolor/128x128/apps/0ad.png
     install -D build/resources/0ad.desktop $out/share/applications/0ad.desktop
   '';
 
   meta = {
-    description = "Free, open-source game of ancient warfare";
+    changelog = "https://play0ad.com/new-release-0-a-d-release-28-boiorix/";
+    # Free, open-source game of ancient warfare
+    description = "0 A.D. — ancient warfare real-time strategy game";
     homepage = "https://play0ad.com/";
     license = with lib.licenses; [
       gpl2Plus
@@ -190,8 +220,17 @@ stdenv.mkDerivation (finalAttrs: {
       cc-by-sa-30
       lib.licenses.zlib # otherwise masked by pkgs.zlib
     ];
-    maintainers = with lib.maintainers; [ chvp ];
-    platforms = lib.subtractLists lib.platforms.i686 lib.platforms.linux;
+    maintainers = with lib.maintainers; [
+      chvp
+      philocalyst
+    ];
+    platforms = (lib.subtractLists lib.platforms.i686 lib.platforms.linux) ++ lib.platforms.darwin;
     mainProgram = "0ad";
+    longDescription = ''
+      0 A.D. (pronounced "zero-ey-dee") is a free, open-source, cross-platform real-time strategy
+      game of ancient warfare. It is a historical-warfare and economy game, similar in spirit to the
+      Age of Empires series, with the player guiding the development of a civilization from a small
+      settlement to an empire.
+    '';
   };
 })

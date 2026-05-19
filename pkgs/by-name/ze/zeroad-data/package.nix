@@ -24,7 +24,7 @@ stdenv.mkDerivation (finalAttrs: {
     homepage = "https://play0ad.com/";
     license = lib.licenses.cc-by-sa-30;
     maintainers = with lib.maintainers; [ chvp ];
-    platforms = lib.platforms.linux;
+    platforms = lib.platforms.all;
     hydraPlatforms = [ ];
   };
 })
