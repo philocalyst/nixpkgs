@@ -12,13 +12,13 @@
 
 buildGoModule (finalAttrs: {
   pname = "lakefs";
-  version = "1.79.0";
+  version = "1.82.0";
 
   src = fetchFromGitHub {
     owner = "treeverse";
     repo = "lakeFS";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-UL9JvrNvtHADI0POguLXMDNNvO1oKHXXwfr8tOyvFYc=";
+    hash = "sha256-78M0625BhNPx8q2+x2tVzngmF5OmYa9ACDIeRr0qNrc=";
   };
 
   webui = buildNpmPackage {
@@ -30,7 +30,7 @@ buildGoModule (finalAttrs: {
 
     nodejs = nodejs_22;
 
-    npmDepsHash = "sha256-Z9oOIKK6Hm/Bg3E37f4FqFFL1exMIf0KNEHQXIyox+Q=";
+    npmDepsHash = "sha256-XQ3fwmB/S9Qd/pFRtGHPesRy6OspOzjQZpUCkOgtRjk=";
 
     installPhase = ''
       runHook preInstall
@@ -41,7 +41,7 @@ buildGoModule (finalAttrs: {
 
   subPackages = [ "cmd/lakefs" ];
   proxyVendor = true;
-  vendorHash = "sha256-6XOJBDdAERD6mcneQ7UFqAPGq+pXroNlzQGNvycpVBc=";
+  vendorHash = "sha256-rnt5QZp+D7FBTH5718vQnAMsE4XpKiP3U0VNRgFB7mM=";
 
   ldflags = [
     "-s"
