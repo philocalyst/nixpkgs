@@ -13,7 +13,7 @@ in
   meta.maintainers = with lib.maintainers; [ philocalyst ];
 
   options.services.fingerd = {
-    enable = lib.mkEnableOption "the fingerd finger protocol daemon (Go implementation; unprivileged on Linux per golang/go#1435)";
+    enable = lib.mkEnableOption "the fingerd finger protocol daemon";
 
     package = lib.mkPackageOption pkgs "fingerd" { };
 
@@ -36,7 +36,7 @@ in
     aliasFile = lib.mkOption {
       type = lib.types.nullOr lib.types.path;
       default = "/etc/finger.conf";
-      description = "Path to alias file. Set to null or empty string to disable.";
+      description = "Path to alias file. Set to null to disable.";
     };
 
     extraFlags = lib.mkOption {
@@ -50,7 +50,9 @@ in
     security.wrappers.fingerd = {
       owner = "root";
       group = "root";
-      capabilities = "cap_net_bind_service+p";
+      # The package must stay an ordinary, unprivileged store artifact. The
+      # NixOS wrapper supplies the effective capability at runtime instead.
+      capabilities = "cap_net_bind_service+ep";
       source = lib.getExe cfg.package;
     };
 
@@ -68,7 +70,7 @@ in
             "-homes-dir"
             cfg.homesDir
           ]
-          ++ lib.optionals (cfg.aliasFile != null && cfg.aliasFile != "") [
+          ++ lib.optionals (cfg.aliasFile != null) [
             "-alias-file"
             cfg.aliasFile
           ]

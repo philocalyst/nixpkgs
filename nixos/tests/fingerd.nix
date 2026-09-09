@@ -2,7 +2,7 @@
 let
   testUser = "alice";
   testPlan = "NixOS fingerd smoke test";
-  port = 1079;
+  port = 79;
 in
 {
   name = "fingerd";
@@ -21,7 +21,6 @@ in
 
       services.fingerd = {
         enable = true;
-        listen = ":${toString port}";
         aliasFile = null;
       };
 
